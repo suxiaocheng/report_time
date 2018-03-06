@@ -18,33 +18,39 @@ public class Log {
 	private static FileWriter fwLogFile = null;
 
 	static {
-		Date today = new Date();
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH_mm");
-		String strDate = dateFormat.format(today);
+		if (Config.DEUBG_LOG2FILE) {
+			Date today = new Date();
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH_mm");
+			String strDate = dateFormat.format(today);
 
-		fLogDir = new File(strLogDir);
-		if (fLogDir.exists() == true) {
-			if (fLogDir.isDirectory() == false) {
-				fLogDir.delete();
+			fLogDir = new File(strLogDir);
+			if (fLogDir.exists() == true) {
+				if (fLogDir.isDirectory() == false) {
+					fLogDir.delete();
+				}
+			} else {
+				fLogDir.mkdirs();
+			}
+
+			fLogFile = new File(strLogDir + File.separator + strLogName + strDate + ".log");
+			try {
+				fwLogFile = new FileWriter(fLogFile);
+				bwLogFile = new BufferedWriter(fwLogFile);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				bwLogFile = null;
 			}
 		} else {
-			fLogDir.mkdirs();
-		}
-
-		fLogFile = new File(strLogDir + File.separator + strLogName + strDate + ".log");
-		try {
-			fwLogFile = new FileWriter(fLogFile);
-			bwLogFile = new BufferedWriter(fwLogFile);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 			bwLogFile = null;
 		}
 	}
 
 	protected void finalize() {
 		try {
-			bwLogFile.close();
+			if (bwLogFile != null) {
+				bwLogFile.close();
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

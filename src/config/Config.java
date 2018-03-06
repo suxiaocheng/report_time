@@ -9,5 +9,7 @@ public class Config {
 	public static final int MAX_FAIL_TIMES_ALLOW = 16;
 	public static final int MAX_EXECUTE_THREAD = 64;
 	public static final String FILE_STORAGE_PATH = File.separator + "home" + File.separator + "pi" + File.separator
-			+ "ReportTime" + File.separator;;
+			+ "ReportTime" + File.separator;
+	public static final boolean DEUBG_LOG2FILE = false;
+	public static final String OS_NAME = System.getProperties().getProperty("os.name");
 }

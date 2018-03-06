@@ -53,7 +53,9 @@ public class ReportTime {
 		/* sync time first */
 		boolean bStatus;
 		boolean bPreNetworkStatus = true;
-		int iCount = 0;
+		IndicateBackground indicateBackground = new IndicateBackground(SoundNotify[0], 6);
+		Thread indicateThread = new Thread(indicateBackground);
+		indicateThread.start();
 		while (true) {
 			bStatus = SyncTime.isConnect();
 			if (bStatus == true) {
@@ -65,11 +67,15 @@ public class ReportTime {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			iCount++;
-			if ((iCount % 6) == 0) {
-				playNotify();
-			}
 		}
+		indicateBackground.setQuitFlag();
+		try {
+			indicateThread.join();
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
 		playNetworkConnect();
 
 		if (bDebug) {
@@ -98,11 +104,26 @@ public class ReportTime {
 				}
 				calendar = Calendar.getInstance();
 				int minute = calendar.get(Calendar.MINUTE);
-				if (minute == 0) {
+				if ((minute % 15) == 0) {
 					int hour = calendar.get(Calendar.HOUR_OF_DAY);
-					if ((hour == 7) || (hour == 23)) {
-						playFavorite();
-					} else if (hour > 7) {
+					if (minute == 0) {
+						if (hour >= 7) {
+							switch (hour) {
+							case 7:
+								playFavorite();
+								break;
+							case 8:
+								playFavorite();
+								break;
+							case 23:
+								playFavorite();
+								break;
+							default:
+								playCurrentTime();
+								break;
+							}
+						}
+					} else {
 						playCurrentTime();
 					}
 				}
