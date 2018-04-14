@@ -107,7 +107,7 @@ public class ReportTime {
 				if ((minute % 15) == 0) {
 					int hour = calendar.get(Calendar.HOUR_OF_DAY);
 					if (minute == 0) {
-						if (hour >= 7) {
+						if (hour >= Config.INDICATE_TIME) {
 							switch (hour) {
 							case 7:
 								playFavorite();
@@ -124,7 +124,9 @@ public class ReportTime {
 							}
 						}
 					} else {
-						playCurrentTime();
+						if (hour >= Config.INDICATE_TIME) {
+							playCurrentTime();
+						}
 					}
 				}
 			} else {
