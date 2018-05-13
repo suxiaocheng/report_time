@@ -1,6 +1,13 @@
 package app;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -46,13 +53,16 @@ public class ReportTime {
 	private static final String[] SoundFavoriteMusic = {
 			Config.FILE_STORAGE_PATH + "Music" + File.separator + "Home.wav" };
 
-	private static final boolean bDebug = false;
+	private static final boolean bDebug = false;// false;
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		/* sync time first */
 		boolean bStatus;
 		boolean bPreNetworkStatus = true;
+
+		Config.dumpSystemInfo();
+
 		IndicateBackground indicateBackground = new IndicateBackground(SoundNotify[0], 6);
 		Thread indicateThread = new Thread(indicateBackground);
 		indicateThread.start();
@@ -76,10 +86,10 @@ public class ReportTime {
 			e1.printStackTrace();
 		}
 
-		playNetworkConnect();
-
 		if (bDebug) {
-			playFavorite();
+			// playFavorite();
+		} else {
+			playNetworkConnect();
 		}
 
 		bStatus = SyncTime.waitNetworkTimeSync();
@@ -108,6 +118,7 @@ public class ReportTime {
 					int hour = calendar.get(Calendar.HOUR_OF_DAY);
 					if (minute == 0) {
 						if (hour >= Config.INDICATE_TIME) {
+							playCurrentTime();
 							switch (hour) {
 							case 7:
 								playFavorite();
@@ -119,7 +130,6 @@ public class ReportTime {
 								playFavorite();
 								break;
 							default:
-								playCurrentTime();
 								break;
 							}
 						}
@@ -130,6 +140,7 @@ public class ReportTime {
 					}
 				}
 			} else {
+				playFavorite();
 				playCurrentTime();
 			}
 
@@ -146,10 +157,104 @@ public class ReportTime {
 		}
 	}
 
+	public static int writeCmd2File(String cmd) {
+		File f = new File(Config.FILE_STORAGE_PATH + "cmd.sh");
+		String header = new String("#!/bin/sh\n");
+		String end = new String("\n");
+		if(f.exists()){
+			f.delete();
+		}
+		int ret = 0;
+		try {
+			FileOutputStream out = new FileOutputStream(f);	
+			out.write(header.getBytes());
+			out.write(cmd.getBytes());
+			out.write(end.getBytes());
+			out.close();
+			
+			f.setExecutable(true, false);			
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			ret = -1;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			ret = -2;
+		}
+		
+		return ret;
+	}
+
 	public static void playFavorite() {
-		AudioPlayer ap = new AudioPlayer(SoundFavoriteMusic);
-		Thread t = new Thread(ap);
-		t.start();
+		java.util.Random r = new java.util.Random();
+		File root;
+		if (bDebug) {
+			root = new File(Config.MUSIC_STORAGE_PATH_DEBUG);
+		} else {
+			root = new File(Config.MUSIC_STORAGE_PATH);
+		}
+		List<File> filelist = new ArrayList<File>();
+		File random_file = null;
+		for (File f : root.listFiles()) {
+			if (f.isDirectory() == false) {
+				if (f.getName().endsWith("mp3") == true) {
+					filelist.add(f);
+				}
+			}
+		}
+
+		if (filelist.size() > 0) {
+			random_file = filelist.get(r.nextInt(filelist.size()));
+			if (random_file.canRead() == true) {				
+				String command = "mplayer --volume=100 --softvol-max=300 " + "\""
+						+ (bDebug ? Config.MUSIC_STORAGE_PATH_DEBUG : Config.MUSIC_STORAGE_PATH)
+						+ random_file.getName() + "\"";
+				int min_count = 0;
+
+				Log.d("Going to exec: " + command);
+				writeCmd2File(command);
+				
+				Process p;
+				String s = null;
+				try {
+					p = Runtime.getRuntime().exec(Config.FILE_STORAGE_PATH + "cmd.sh");
+					InputStream is = p.getInputStream();
+					OutputStream out = p.getOutputStream();
+
+					BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+
+					while (reader.ready() == false) {
+						Thread.sleep(100);
+					}
+
+					while (reader.ready() == true) {
+						s = reader.readLine();
+						System.out.println(s);
+					}
+
+					System.out.println("Start check timestamp");
+
+					/* start to read the timestamp */
+					while (true) {
+						min_count++;
+						Thread.sleep(30000);
+						System.out.println("Tick");
+						if (min_count > 7) {
+							break;
+						}
+					}
+					p.destroy();
+
+					reader.close();
+					out.close();
+					is.close();
+				} catch (IOException | InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 	public static void playNotify() {
