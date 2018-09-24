@@ -19,39 +19,39 @@ import tool.SyncTime;
 public class ReportTime {
 
 	private static final String[] SoundNetworkConnect = {
-			Config.FILE_STORAGE_PATH + "Music" + File.separator + "start.wav",
-			Config.FILE_STORAGE_PATH + "Music" + File.separator + "NetworkConnect.wav" };
+			Config.MUSIC_STORAGE_PATH + "start.wav",
+			Config.MUSIC_STORAGE_PATH + "NetworkConnect.wav" };
 	private static final String[] SoundNetworkDisconnect = {
-			Config.FILE_STORAGE_PATH + "Music" + File.separator + "start.wav",
-			Config.FILE_STORAGE_PATH + "Music" + File.separator + "NetworkDisconnect.wav" };
-	private static final String[] SoundSequenceNumber = { Config.FILE_STORAGE_PATH + "Music" + File.separator + "0.wav",
-			Config.FILE_STORAGE_PATH + "Music" + File.separator + "1.wav",
-			Config.FILE_STORAGE_PATH + "Music" + File.separator + "2.wav",
-			Config.FILE_STORAGE_PATH + "Music" + File.separator + "3.wav",
-			Config.FILE_STORAGE_PATH + "Music" + File.separator + "4.wav",
-			Config.FILE_STORAGE_PATH + "Music" + File.separator + "5.wav",
-			Config.FILE_STORAGE_PATH + "Music" + File.separator + "6.wav",
-			Config.FILE_STORAGE_PATH + "Music" + File.separator + "7.wav",
-			Config.FILE_STORAGE_PATH + "Music" + File.separator + "8.wav",
-			Config.FILE_STORAGE_PATH + "Music" + File.separator + "9.wav", };
+			Config.MUSIC_STORAGE_PATH + "start.wav",
+			Config.MUSIC_STORAGE_PATH + "NetworkDisconnect.wav" };
+	private static final String[] SoundSequenceNumber = { Config.MUSIC_STORAGE_PATH + "0.wav",
+			Config.MUSIC_STORAGE_PATH + "1.wav",
+			Config.MUSIC_STORAGE_PATH + "2.wav",
+			Config.MUSIC_STORAGE_PATH + "3.wav",
+			Config.MUSIC_STORAGE_PATH + "4.wav",
+			Config.MUSIC_STORAGE_PATH + "5.wav",
+			Config.MUSIC_STORAGE_PATH + "6.wav",
+			Config.MUSIC_STORAGE_PATH + "7.wav",
+			Config.MUSIC_STORAGE_PATH + "8.wav",
+			Config.MUSIC_STORAGE_PATH + "9.wav", };
 	private static final String[] SoundMultiSequenceNumber = {
-			Config.FILE_STORAGE_PATH + "Music" + File.separator + "10.wav",
-			Config.FILE_STORAGE_PATH + "Music" + File.separator + "20.wav",
-			Config.FILE_STORAGE_PATH + "Music" + File.separator + "30.wav",
-			Config.FILE_STORAGE_PATH + "Music" + File.separator + "40.wav",
-			Config.FILE_STORAGE_PATH + "Music" + File.separator + "50.wav", };
-	private static final String[] SoundSep = { Config.FILE_STORAGE_PATH + "Music" + File.separator + "hour.wav",
-			Config.FILE_STORAGE_PATH + "Music" + File.separator + "minute.wav", };
+			Config.MUSIC_STORAGE_PATH + "10.wav",
+			Config.MUSIC_STORAGE_PATH + "20.wav",
+			Config.MUSIC_STORAGE_PATH + "30.wav",
+			Config.MUSIC_STORAGE_PATH + "40.wav",
+			Config.MUSIC_STORAGE_PATH + "50.wav", };
+	private static final String[] SoundSep = { Config.MUSIC_STORAGE_PATH + "hour.wav",
+			Config.MUSIC_STORAGE_PATH + "minute.wav", };
 
 	private static final String[] SoundNetworkState = {
-			Config.FILE_STORAGE_PATH + "Music" + File.separator + "NetworkConnect.wav",
-			Config.FILE_STORAGE_PATH + "Music" + File.separator + "NetworkDisconnect.wav" };
-	private static final String[] SoundNotify = { Config.FILE_STORAGE_PATH + "Music" + File.separator + "start.wav" };
+			Config.MUSIC_STORAGE_PATH + "NetworkConnect.wav",
+			Config.MUSIC_STORAGE_PATH + "NetworkDisconnect.wav" };
+	private static final String[] SoundNotify = { Config.MUSIC_STORAGE_PATH + "start.wav" };
 
-	private static final String[] SoundTimeTitle = { Config.FILE_STORAGE_PATH + "Music" + File.separator + "time.wav" };
+	private static final String[] SoundTimeTitle = { Config.MUSIC_STORAGE_PATH + "time.wav" };
 
 	private static final String[] SoundFavoriteMusic = {
-			Config.FILE_STORAGE_PATH + "Music" + File.separator + "Home.wav" };
+			Config.MUSIC_STORAGE_PATH + "Home.wav" };
 
 	private static final boolean bDebug = false;// false;
 
