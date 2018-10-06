@@ -50,6 +50,7 @@ public class Log {
 		try {
 			if (bwLogFile != null) {
 				bwLogFile.close();
+				bwLogFile = null;
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

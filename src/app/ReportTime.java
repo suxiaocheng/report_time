@@ -97,6 +97,13 @@ public class ReportTime {
 			return;
 		}
 		System.out.println("Sync time sucessfully");
+		
+		
+		// Create thread to get temperature period.
+		GetTemperature getTemperature = new GetTemperature(1000, true);
+		Thread getTempThread = new Thread(getTemperature);
+		getTempThread.start();
+		
 
 		/* Wakeup per minute */
 		Calendar calendar;
