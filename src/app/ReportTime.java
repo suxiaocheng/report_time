@@ -18,40 +18,29 @@ import tool.SyncTime;
 
 public class ReportTime {
 
-	private static final String[] SoundNetworkConnect = {
-			Config.MUSIC_STORAGE_PATH + "start.wav",
+	private static final String[] SoundNetworkConnect = { Config.MUSIC_STORAGE_PATH + "start.wav",
 			Config.MUSIC_STORAGE_PATH + "NetworkConnect.wav" };
-	private static final String[] SoundNetworkDisconnect = {
-			Config.MUSIC_STORAGE_PATH + "start.wav",
+	private static final String[] SoundNetworkDisconnect = { Config.MUSIC_STORAGE_PATH + "start.wav",
 			Config.MUSIC_STORAGE_PATH + "NetworkDisconnect.wav" };
 	private static final String[] SoundSequenceNumber = { Config.MUSIC_STORAGE_PATH + "0.wav",
-			Config.MUSIC_STORAGE_PATH + "1.wav",
-			Config.MUSIC_STORAGE_PATH + "2.wav",
-			Config.MUSIC_STORAGE_PATH + "3.wav",
-			Config.MUSIC_STORAGE_PATH + "4.wav",
-			Config.MUSIC_STORAGE_PATH + "5.wav",
-			Config.MUSIC_STORAGE_PATH + "6.wav",
-			Config.MUSIC_STORAGE_PATH + "7.wav",
-			Config.MUSIC_STORAGE_PATH + "8.wav",
+			Config.MUSIC_STORAGE_PATH + "1.wav", Config.MUSIC_STORAGE_PATH + "2.wav",
+			Config.MUSIC_STORAGE_PATH + "3.wav", Config.MUSIC_STORAGE_PATH + "4.wav",
+			Config.MUSIC_STORAGE_PATH + "5.wav", Config.MUSIC_STORAGE_PATH + "6.wav",
+			Config.MUSIC_STORAGE_PATH + "7.wav", Config.MUSIC_STORAGE_PATH + "8.wav",
 			Config.MUSIC_STORAGE_PATH + "9.wav", };
-	private static final String[] SoundMultiSequenceNumber = {
-			Config.MUSIC_STORAGE_PATH + "10.wav",
-			Config.MUSIC_STORAGE_PATH + "20.wav",
-			Config.MUSIC_STORAGE_PATH + "30.wav",
-			Config.MUSIC_STORAGE_PATH + "40.wav",
-			Config.MUSIC_STORAGE_PATH + "50.wav", };
+	private static final String[] SoundMultiSequenceNumber = { Config.MUSIC_STORAGE_PATH + "10.wav",
+			Config.MUSIC_STORAGE_PATH + "20.wav", Config.MUSIC_STORAGE_PATH + "30.wav",
+			Config.MUSIC_STORAGE_PATH + "40.wav", Config.MUSIC_STORAGE_PATH + "50.wav", };
 	private static final String[] SoundSep = { Config.MUSIC_STORAGE_PATH + "hour.wav",
 			Config.MUSIC_STORAGE_PATH + "minute.wav", };
 
-	private static final String[] SoundNetworkState = {
-			Config.MUSIC_STORAGE_PATH + "NetworkConnect.wav",
+	private static final String[] SoundNetworkState = { Config.MUSIC_STORAGE_PATH + "NetworkConnect.wav",
 			Config.MUSIC_STORAGE_PATH + "NetworkDisconnect.wav" };
 	private static final String[] SoundNotify = { Config.MUSIC_STORAGE_PATH + "start.wav" };
 
 	private static final String[] SoundTimeTitle = { Config.MUSIC_STORAGE_PATH + "time.wav" };
 
-	private static final String[] SoundFavoriteMusic = {
-			Config.MUSIC_STORAGE_PATH + "Home.wav" };
+	private static final String[] SoundFavoriteMusic = { Config.MUSIC_STORAGE_PATH + "Home.wav" };
 
 	private static final boolean bDebug = false;// false;
 
@@ -89,6 +78,7 @@ public class ReportTime {
 		if (bDebug) {
 			// playFavorite();
 		} else {
+			playFavorite();
 			playNetworkConnect();
 		}
 
@@ -97,13 +87,11 @@ public class ReportTime {
 			return;
 		}
 		System.out.println("Sync time sucessfully");
-		
-		
+
 		// Create thread to get temperature period.
 		GetTemperature getTemperature = new GetTemperature(1000, true);
 		Thread getTempThread = new Thread(getTemperature);
 		getTempThread.start();
-		
 
 		/* Wakeup per minute */
 		Calendar calendar;
@@ -168,18 +156,18 @@ public class ReportTime {
 		File f = new File(Config.FILE_STORAGE_PATH + "cmd.sh");
 		String header = new String("#!/bin/sh\n");
 		String end = new String("\n");
-		if(f.exists()){
+		if (f.exists()) {
 			f.delete();
 		}
 		int ret = 0;
 		try {
-			FileOutputStream out = new FileOutputStream(f);	
+			FileOutputStream out = new FileOutputStream(f);
 			out.write(header.getBytes());
 			out.write(cmd.getBytes());
 			out.write(end.getBytes());
 			out.close();
-			
-			f.setExecutable(true, false);			
+
+			f.setExecutable(true, false);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -189,18 +177,14 @@ public class ReportTime {
 			e.printStackTrace();
 			ret = -2;
 		}
-		
+
 		return ret;
 	}
 
 	public static void playFavorite() {
 		java.util.Random r = new java.util.Random();
 		File root;
-		if (bDebug) {
-			root = new File(Config.MUSIC_STORAGE_PATH_DEBUG);
-		} else {
-			root = new File(Config.MUSIC_STORAGE_PATH);
-		}
+		root = new File(Config.FAVORITE_STORAGE_PATH);
 		List<File> filelist = new ArrayList<File>();
 		File random_file = null;
 		for (File f : root.listFiles()) {
@@ -213,53 +197,15 @@ public class ReportTime {
 
 		if (filelist.size() > 0) {
 			random_file = filelist.get(r.nextInt(filelist.size()));
-			if (random_file.canRead() == true) {				
-				String command = "mplayer --volume=100 --softvol-max=300 " + "\""
-						+ (bDebug ? Config.MUSIC_STORAGE_PATH_DEBUG : Config.MUSIC_STORAGE_PATH)
+			if (random_file.canRead() == true) {
+				String command = "screen -dms mplayer mplayer " + "\"" + Config.FAVORITE_STORAGE_PATH
 						+ random_file.getName() + "\"";
 				int min_count = 0;
 
 				Log.d("Going to exec: " + command);
 				writeCmd2File(command);
 				
-				Process p;
-				String s = null;
-				try {
-					p = Runtime.getRuntime().exec(Config.FILE_STORAGE_PATH + "cmd.sh");
-					InputStream is = p.getInputStream();
-					OutputStream out = p.getOutputStream();
-
-					BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-
-					while (reader.ready() == false) {
-						Thread.sleep(100);
-					}
-
-					while (reader.ready() == true) {
-						s = reader.readLine();
-						System.out.println(s);
-					}
-
-					System.out.println("Start check timestamp");
-
-					/* start to read the timestamp */
-					while (true) {
-						min_count++;
-						Thread.sleep(30000);
-						System.out.println("Tick");
-						if (min_count > 7) {
-							break;
-						}
-					}
-					p.destroy();
-
-					reader.close();
-					out.close();
-					is.close();
-				} catch (IOException | InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				Config.runCommand(Config.FILE_STORAGE_PATH + "cmd.sh");
 			}
 		}
 	}
