@@ -21,6 +21,7 @@ public class Config {
 	public static final String OS_NAME = System.getProperties().getProperty("os.name");
 	public static final int INDICATE_TIME = 7;
 	public static final int SYNC_FILESYSTEM_TIME = 5 * 60; // Sync file to filesystem every 5 minute
+	public static final boolean USE_FFPLAY2PLAY_FAV = true;
 
 	public static void dumpSystemInfo() {
 		System.out.println("************************************************************");

@@ -14,33 +14,34 @@ import java.util.List;
 
 import config.Config;
 import debug.Log;
+import jaco.mp3.player.MP3Player;
 import tool.SyncTime;
 
 public class ReportTime {
 
-	private static final String[] SoundNetworkConnect = { Config.MUSIC_STORAGE_PATH + "start.wav",
-			Config.MUSIC_STORAGE_PATH + "NetworkConnect.wav" };
-	private static final String[] SoundNetworkDisconnect = { Config.MUSIC_STORAGE_PATH + "start.wav",
-			Config.MUSIC_STORAGE_PATH + "NetworkDisconnect.wav" };
-	private static final String[] SoundSequenceNumber = { Config.MUSIC_STORAGE_PATH + "0.wav",
-			Config.MUSIC_STORAGE_PATH + "1.wav", Config.MUSIC_STORAGE_PATH + "2.wav",
-			Config.MUSIC_STORAGE_PATH + "3.wav", Config.MUSIC_STORAGE_PATH + "4.wav",
-			Config.MUSIC_STORAGE_PATH + "5.wav", Config.MUSIC_STORAGE_PATH + "6.wav",
-			Config.MUSIC_STORAGE_PATH + "7.wav", Config.MUSIC_STORAGE_PATH + "8.wav",
-			Config.MUSIC_STORAGE_PATH + "9.wav", };
-	private static final String[] SoundMultiSequenceNumber = { Config.MUSIC_STORAGE_PATH + "10.wav",
-			Config.MUSIC_STORAGE_PATH + "20.wav", Config.MUSIC_STORAGE_PATH + "30.wav",
-			Config.MUSIC_STORAGE_PATH + "40.wav", Config.MUSIC_STORAGE_PATH + "50.wav", };
-	private static final String[] SoundSep = { Config.MUSIC_STORAGE_PATH + "hour.wav",
-			Config.MUSIC_STORAGE_PATH + "minute.wav", };
+	private static final String[] SoundNetworkConnect = { Config.MUSIC_STORAGE_PATH + "start.mp3",
+			Config.MUSIC_STORAGE_PATH + "NetworkConnect.mp3" };
+	private static final String[] SoundNetworkDisconnect = { Config.MUSIC_STORAGE_PATH + "start.mp3",
+			Config.MUSIC_STORAGE_PATH + "NetworkDisconnect.mp3" };
+	private static final String[] SoundSequenceNumber = { Config.MUSIC_STORAGE_PATH + "0.mp3",
+			Config.MUSIC_STORAGE_PATH + "1.mp3", Config.MUSIC_STORAGE_PATH + "2.mp3",
+			Config.MUSIC_STORAGE_PATH + "3.mp3", Config.MUSIC_STORAGE_PATH + "4.mp3",
+			Config.MUSIC_STORAGE_PATH + "5.mp3", Config.MUSIC_STORAGE_PATH + "6.mp3",
+			Config.MUSIC_STORAGE_PATH + "7.mp3", Config.MUSIC_STORAGE_PATH + "8.mp3",
+			Config.MUSIC_STORAGE_PATH + "9.mp3", };
+	private static final String[] SoundMultiSequenceNumber = { Config.MUSIC_STORAGE_PATH + "10.mp3",
+			Config.MUSIC_STORAGE_PATH + "20.mp3", Config.MUSIC_STORAGE_PATH + "30.mp3",
+			Config.MUSIC_STORAGE_PATH + "40.mp3", Config.MUSIC_STORAGE_PATH + "50.mp3", };
+	private static final String[] SoundSep = { Config.MUSIC_STORAGE_PATH + "hour.mp3",
+			Config.MUSIC_STORAGE_PATH + "minute.mp3", };
 
-	private static final String[] SoundNetworkState = { Config.MUSIC_STORAGE_PATH + "NetworkConnect.wav",
-			Config.MUSIC_STORAGE_PATH + "NetworkDisconnect.wav" };
-	private static final String[] SoundNotify = { Config.MUSIC_STORAGE_PATH + "start.wav" };
+	private static final String[] SoundNetworkState = { Config.MUSIC_STORAGE_PATH + "NetworkConnect.mp3",
+			Config.MUSIC_STORAGE_PATH + "NetworkDisconnect.mp3" };
+	private static final String[] SoundNotify = { Config.MUSIC_STORAGE_PATH + "start.mp3" };
 
-	private static final String[] SoundTimeTitle = { Config.MUSIC_STORAGE_PATH + "time.wav" };
+	private static final String[] SoundTimeTitle = { Config.MUSIC_STORAGE_PATH + "time.mp3" };
 
-	private static final String[] SoundFavoriteMusic = { Config.MUSIC_STORAGE_PATH + "Home.wav" };
+	private static final String[] SoundFavoriteMusic = { Config.MUSIC_STORAGE_PATH + "Home.mp3" };
 
 	private static final boolean bDebug = false;// false;
 
@@ -187,10 +188,12 @@ public class ReportTime {
 		root = new File(Config.FAVORITE_STORAGE_PATH);
 		List<File> filelist = new ArrayList<File>();
 		File random_file = null;
-		for (File f : root.listFiles()) {
-			if (f.isDirectory() == false) {
-				if (f.getName().endsWith("mp3") == true) {
-					filelist.add(f);
+		if (root != null) {
+			for (File f : root.listFiles()) {
+				if (f.isDirectory() == false) {
+					if (f.getName().endsWith("mp3") == true) {
+						filelist.add(f);
+					}
 				}
 			}
 		}
@@ -198,14 +201,27 @@ public class ReportTime {
 		if (filelist.size() > 0) {
 			random_file = filelist.get(r.nextInt(filelist.size()));
 			if (random_file.canRead() == true) {
-				String command = "screen -dms mplayer mplayer " + "\"" + Config.FAVORITE_STORAGE_PATH
-						+ random_file.getName() + "\"";
-				int min_count = 0;
+				if (Config.USE_FFPLAY2PLAY_FAV) {
+					String command = "screen -dms mplayer mplayer " + "\"" + Config.FAVORITE_STORAGE_PATH
+							+ random_file.getName() + "\"";
+					int min_count = 0;
 
-				Log.d("Going to exec: " + command);
-				writeCmd2File(command);
-				
-				Config.runCommand(Config.FILE_STORAGE_PATH + "cmd.sh");
+					Log.d("Going to exec: " + command);
+					writeCmd2File(command);
+
+					Config.runCommand(Config.FILE_STORAGE_PATH + "cmd.sh");
+				} else {
+					MP3Player player = new MP3Player(random_file);
+					player.play();
+					while (player.isStopped() == false) {
+						try {
+							Thread.sleep(10);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				}
 			}
 		}
 	}
